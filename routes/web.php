@@ -28,8 +28,20 @@ Route::middleware('auth')->group(function () {
     });
 
     // Pindahkan ke sini agar Auth::user() selalu ada (tidak null)
-    Route::resource('kategori', KategoriController::class);
-    Route::resource('barang', BarangController::class);
-    Route::resource('lokasi', LokasiController::class);
+
+// routes/web.php
+Route::middleware('auth')->group(function () {
+    Route::resource('kategori', App\Http\Controllers\KategoriController::class);
+    Route::resource('lokasi', App\Http\Controllers\LokasiController::class);
+    Route::resource('barang', App\Http\Controllers\BarangController::class);
+    Route::resource('peminjaman', App\Http\Controllers\PeminjamanController::class);
+});
+
+Route::get('/barang/{barang}/edit', [BarangController::class, 'edit'])->name('barang.edit');
+
+
+
 
 });
+
+

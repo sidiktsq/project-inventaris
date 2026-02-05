@@ -1,97 +1,168 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4">
-        <span class="text-muted fw-light">Sistem /</span> Daftar Kategori
-    </h4>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    @if(session('success'))
-    <div class="alert alert-primary alert-dismissible" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<style>
+    /* Styling Elegan Custom */
+    .card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+    .table thead th { 
+        background-color: #f8f9fa; 
+        text-transform: uppercase; 
+        font-size: 0.75rem; 
+        letter-spacing: 1px; 
+        font-weight: 700;
+        border: none;
+    }
+    .avatar-initial {
+        width: 38px; height: 38px;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: bold; transition: 0.3s;
+    }
+    /* Action Buttons Icon Style */
+    .btn-action {
+        width: 35px; height: 35px;
+        display: inline-flex; align-items: center; justify-content: center;
+        border-radius: 10px; transition: all 0.3s;
+        margin: 0 2px;
+    }
+    .btn-edit { background: #e7e7ff; color: #696cff; }
+    .btn-edit:hover { background: #696cff; color: #fff; transform: translateY(-2px); }
+    
+    .btn-delete { background: #ffe0db; color: #ff3e1d; }
+    .btn-delete:hover { background: #ff3e1d; color: #fff; transform: translateY(-2px); }
+
+    /* Merapikan DataTables bawah */
+    .dataTables_info { font-size: 0.85rem; padding-left: 1.5rem; }
+    .dataTables_paginate { padding-right: 1.5rem; padding-top: 1rem; }
+</style>
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">
+            <span class="text-muted fw-light">Sistem /</span> Daftar Kategori
+        </h4>
+        <a href="{{ route('kategori.create') }}" class="btn btn-primary shadow-sm px-4">
+            <i class="bx bx-plus-circle me-1"></i> Tambah Kategori
+        </a>
     </div>
-    @endif
 
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Daftar Kategori Aktif</h5>
-            <a href="{{ route('kategori.create') }}" class="btn btn-primary">
-                <i class="bx bx-plus me-1"></i> Tambah Kategori Baru
-            </a>
-        </div>
-        
-        <div class="table-responsive text-nowrap">
-            <table class="table table-hover">
+        <div class="card-datatable table-responsive px-3 py-3">
+            <table class="table table-hover" id="kategoriTable">
                 <thead>
                     <tr>
-                        <th style="width: 30%">Kategori</th>
-                        <th style="width: 40%">Deskripsi</th>
-                        <th style="width: 20%">Status</th>
-                        <th style="width: 10%" class="text-center">Aksi</th>
+                        <th>Kategori</th>
+                        <th>Deskripsi</th>
+                        <th>Status</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="table-border-bottom-0">
-                    @forelse($kategoris as $item)
+                <tbody>
+                    @foreach($kategoris as $item)
                     <tr>
                         <td>
-                            <div class="d-flex justify-content-start align-items-center">
-                                <div class="avatar-wrapper">
-                                    <div class="avatar me-2">
-                                        <span class="avatar-initial rounded bg-label-primary">
-                                            {{ strtoupper(substr($item->nama, 0, 1)) }}
-                                        </span>
-                                    </div>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar me-3">
+                                    <span class="avatar-initial rounded-circle bg-label-primary">
+                                        {{ strtoupper(substr($item->nama, 0, 1)) }}
+                                    </span>
                                 </div>
-                                <div class="d-flex flex-column">
-                                    <span class="fw-medium text-heading text-truncate">{{ $item->nama }}</span>
-                                </div>
+                                <span class="fw-bold text-dark">{{ $item->nama }}</span>
                             </div>
                         </td>
                         <td>
-                            <span class="text-muted">{{ Str::limit($item->deskripsi, 50) ?? 'Tidak ada deskripsi' }}</span>
+                            <span class="text-muted">{{ Str::limit($item->deskripsi, 40) ?: '-' }}</span>
                         </td>
-                        
                         <td>
-                            @if($item->status == 1)
-                                <span class="badge bg-label-success">AKTIF</span>
+                           @if($item->status == 1)
+                                <span class="badge bg-success">AKTIF</span>
                             @else
-                                <span class="badge bg-label-secondary">TIDAK AKTIF</span>
+                                <span class="badge bg-danger">TIDAK AKTIF</span>
                             @endif
                         </td>
-
                         <td class="text-center">
-                            <div class="dropdown">
-                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{{ route('kategori.edit', $item->id) }}">
-                                        <i class="bx bx-edit-alt me-1"></i> Edit
-                                    </a>
-                                    <form action="{{ route('kategori.destroy', $item->id) }}" method="POST" 
-                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="bx bx-trash me-1"></i> Hapus
-                                        </button>
-                                    </form>
-                                </div>
+                            <div class="d-flex justify-content-center">
+                                <a href="{{ route('kategori.edit', $item->id) }}" class="btn-action btn-edit" title="Edit">
+                                    <i class="bx bx-edit-alt"></i>
+                                </a>
+                                
+                                <form action="{{ route('kategori.destroy', $item->id) }}" method="POST" class="delete-form">
+                                    @csrf @method('DELETE')
+                                    <button type="button" class="btn-action btn-delete btn-delete-confirm" title="Hapus">
+                                        <i class="bx bx-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="text-center py-5 text-muted">Belum ada data kategori.</td>
-                    </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
-        </div>
-        <div class="card-footer border-top p-3">
-            <small class="text-muted">Showing {{ $kategoris->count() }} entries</small>
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // 1. Inisialisasi DataTables (Agar muncul Search & Showing Entries)
+    $('#kategoriTable').DataTable({
+        "language": {
+            "search": "",
+            "searchPlaceholder": "Cari kategori...",
+            "lengthMenu": "_MENU_",
+            "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+            "paginate": {
+                "next": '<i class="bx bx-chevron-right"></i>',
+                "previous": '<i class="bx bx-chevron-left"></i>'
+            }
+        },
+        "dom": '<"row mx-1"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"row mx-1"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+    });
+
+    // 2. SweetAlert2 Notifikasi Sukses
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            showConfirmButton: false,
+            timer: 2000,
+            background: '#fff',
+            iconColor: '#696cff'
+        });
+    @endif
+
+    // 3. SweetAlert2 Konfirmasi Hapus
+    $(document).on('click', '.btn-delete-confirm', function(e) {
+        let form = $(this).closest('form');
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#696cff',
+            cancelButtonColor: '#ff3e1d',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            customClass: {
+                confirmButton: 'btn btn-primary me-3',
+                cancelButton: 'btn btn-label-secondary'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+@endpush

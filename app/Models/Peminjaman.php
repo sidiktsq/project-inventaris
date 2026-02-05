@@ -1,34 +1,40 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\Barang;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Peminjaman extends Model {
-    protected $table = 'peminjaman';
+class Peminjaman extends Model
+{
+    protected $table = 'peminjaman'; // Sesuaikan dengan nama tabel di database
+
     protected $fillable = [
-        'kode_peminjaman', 'nama_peminjam', 'jenis_peminjam', 
-        'tanggal_pinjam', 'tanggal_kembali', 'status', 'user_id'
+        'kode_peminjaman',
+        'nama_peminjam',
+        'jenis_peminjam',
+        'tanggal_pinjam',
+        'tanggal_kembali',
+        'status',
+        'user_id',
     ];
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    /**
+     * Relasi ke DetailPeminjaman
+     */
+    public function details(): HasMany
+    {
+        // Pastikan model DetailPeminjaman sudah ada
+        return $this->hasMany(DetailPeminjaman::class, 'peminjaman_id');
     }
 
-    public function detail() {
-        return $this->hasMany(DetailPeminjaman::class);
+    /**
+     * Relasi ke User (Staff yang menginput)
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
-}
 
-// Model DetailPeminjaman
-class DetailPeminjaman extends Model {
-    protected $table = 'detail_peminjaman';
-    public $timestamps = false; // Karena di diagram tidak ada timestamps
-    protected $fillable = ['peminjaman_id', 'barang_id', 'jumlah', 'kondisi_sebelum', 'kondisi_sesudah'];
-
-    public function barang() {
-        return $this->belongsTo(Barang::class);
-    }
+    
 }
