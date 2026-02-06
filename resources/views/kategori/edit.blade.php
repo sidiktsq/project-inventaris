@@ -30,14 +30,6 @@
                                 rows="3" placeholder="Masukkan deskripsi singkat">{{ old('deskripsi', $kategori->deskripsi) }}</textarea>
                         </div>
 
-                 <div class="mb-3">
-                      <label class="form-label">Status</label>
-                      <select name="status" class="form-select" required>
-                          <option value="1" {{ $kategori->status ? 'selected' : '' }}>Aktif</option>
-                          <option value="0" {{ !$kategori->status ? 'selected' : '' }}>Tidak Aktif</option>
-                      </select>
-                  </div>
-
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary me-2">Simpan Perubahan</button>
                             <a href="{{ route('kategori.index') }}" class="btn btn-label-secondary">Batal</a>

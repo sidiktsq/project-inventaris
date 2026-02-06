@@ -7,6 +7,9 @@ use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PeminjamanExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PeminjamanController extends Controller
 {
@@ -36,9 +39,20 @@ class PeminjamanController extends Controller
             'jenis_peminjam'  => 'required',
             'tanggal_pinjam'  => 'required|date',
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
-            'barang_id'       => 'required',
-            'jumlah'          => 'required|numeric|min:1',
+            'barang_id'       => 'required|array',
+            'barang_id.*'     => 'required|exists:barang,id',
+            'jumlah'          => 'required|array',
+            'jumlah.*'        => 'required|numeric|min:1',
         ]);
+
+        // Validasi stok barang
+        foreach ($request->barang_id as $index => $barang_id) {
+            $barang = Barang::find($barang_id);
+            $jumlah_pinjam = $request->jumlah[$index];
+            if ($barang->jumlah < $jumlah_pinjam) {
+                return back()->withInput()->with('error', "Stok barang '{$barang->nama_barang}' tidak mencukupi. Tersedia: {$barang->jumlah}, Diminta: {$jumlah_pinjam}");
+            }
+        }
 
         try {
             DB::transaction(function () use ($request) {
@@ -52,20 +66,24 @@ class PeminjamanController extends Controller
                     'user_id'         => Auth::id(),
                 ]);
 
-                DetailPeminjaman::create([
-                    'peminjaman_id'   => $peminjaman->id,
-                    'barang_id'       => $request->barang_id,
-                    'jumlah'          => $request->jumlah,
-                    'kondisi_sebelum' => $request->kondisi_sebelum ?? 'Baik',
-                ]);
+                // Loop through each barang
+                foreach ($request->barang_id as $index => $barang_id) {
+                    DetailPeminjaman::create([
+                        'peminjaman_id'   => $peminjaman->id,
+                        'barang_id'       => $barang_id,
+                        'jumlah'          => $request->jumlah[$index],
+                        'kondisi_sebelum' => 'Baik',
+                    ]);
 
-                $barang = Barang::find($request->barang_id);
-                $barang->decrement('jumlah', $request->jumlah);
+                    // Update stock
+                    $barang = Barang::find($barang_id);
+                    $barang->decrement('jumlah', $request->jumlah[$index]);
+                }
             });
 
             return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil disimpan!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Gagal: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal menyimpan peminjaman: ' . $e->getMessage());
         }
     }
 
@@ -119,9 +137,9 @@ class PeminjamanController extends Controller
     }
 
   
-     public function show($id)
+    public function show($id)
 {
-    $peminjaman = Peminjaman::with(['barang', 'user', 'pengembalian'])
+    $peminjaman = Peminjaman::with(['details.barang', 'user'])
         ->findOrFail($id);
         
     return view('peminjaman.show', compact('peminjaman'));
@@ -137,4 +155,42 @@ class PeminjamanController extends Controller
         $peminjaman->delete();
         return redirect()->route('peminjaman.index')->with('success', 'Data dihapus.');
     }
+
+    public function kembalikan($id)
+    {
+        $peminjaman = Peminjaman::with('details')->findOrFail($id);
+
+        if ($peminjaman->status == 'dikembalikan') {
+            return back()->with('error', 'Barang sudah dikembalikan sebelumnya.');
+        }
+
+        try {
+            DB::transaction(function () use ($peminjaman) {
+                // Update status peminjaman
+                $peminjaman->update(['status' => 'dikembalikan']);
+
+                // Kembalikan stok
+                foreach ($peminjaman->details as $detail) {
+                    Barang::find($detail->barang_id)->increment('jumlah', $detail->jumlah);
+                }
+            });
+
+            return redirect()->route('peminjaman.index')->with('success', 'Barang berhasil dikembalikan dan stok telah diperbarui.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengembalikan barang: ' . $e->getMessage());
+        }
+    }
+
+     public function exportExcel()
+    {
+        return Excel::download(new PeminjamanExport, 'laporan-peminjaman-' . now()->format('Y-m-d') . '.xlsx');
+    }
+
+    public function exportPdf()
+    {
+        $peminjaman = Peminjaman::with(['details.barang', 'user'])->latest()->get();
+        $pdf = Pdf::loadView('peminjaman.pdf', compact('peminjaman'));
+        return $pdf->download('laporan-peminjaman-' . now()->format('Y-m-d') . '.pdf');
+    }
+
 }

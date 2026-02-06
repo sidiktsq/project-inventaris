@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('kategori', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
+            $table->string('nama_kategori');
             $table->text('deskripsi')->nullable();
             $table->enum('status', ['0', '1'])->default('1')->comment('0=Nonaktif, 1=Aktif');
             $table->timestamps();

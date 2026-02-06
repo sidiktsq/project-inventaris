@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Kategori extends Model
 {
     protected $table    = 'kategori'; // Nama tabel sesuai diagram
-    protected $fillable = ['nama', 'deskripsi','status'];
+    protected $fillable = ['nama', 'deskripsi'];
 
     // Relasi ke tabel barang (One to Many)
     public function barangs()

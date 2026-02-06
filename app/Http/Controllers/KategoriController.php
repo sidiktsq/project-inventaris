@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Kategori;
@@ -6,59 +7,81 @@ use Illuminate\Http\Request;
 
 class KategoriController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $kategoris = Kategori::all();
+        $kategoris = Kategori::latest()->paginate(15);
         return view('kategori.index', compact('kategoris'));
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
         return view('kategori.create');
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'nama'      => 'required|string|max:255',
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'status'    => 'nullable|string',
         ]);
 
-        Kategori::create($request->all());
-        return redirect()->route('kategori.index')->with('success', 'Data berhasil ditambah');
+
+        Kategori::create($validated);
+
+        return redirect()->route('kategori.index')
+            ->with('success', 'Kategori berhasil ditambahkan');
     }
 
+    /**
+     * Display the specified resource.
+     */
+    public function show(Kategori $kategori)
+    {
+        return view('kategori.show', compact('kategori'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(Kategori $kategori)
     {
         return view('kategori.edit', compact('kategori'));
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Kategori $kategori)
     {
-        $request->validate([
-            'nama'   => 'required',
-            'status' => 'required|in:0,1',
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
         ]);
 
-        $kategori = Kategori::findOrFail($id);
-        $kategori->update([
-            'nama'      => $request->nama,
-            'deskripsi' => $request->deskripsi,
-            'status'    => $request->status, // Mengambil input dari select
-        ]);
 
-        return redirect()->route('kategori.index')->with('success', 'Data berhasil diubah');
+        $kategori->update($validated);
+
+        return redirect()->route('kategori.index')
+            ->with('success', 'Kategori berhasil diperbarui');
     }
 
-
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(Kategori $kategori)
     {
         $kategori->delete();
-        return redirect()->route('kategori.index')->with('success', 'Data berhasil dihapus');
+
+        return redirect()->route('kategori.index')
+            ->with('success', 'Kategori berhasil dihapus');
     }
 }

@@ -55,7 +55,6 @@
                     <tr>
                         <th>Kategori</th>
                         <th>Deskripsi</th>
-                        <th>Status</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -74,13 +73,6 @@
                         </td>
                         <td>
                             <span class="text-muted">{{ Str::limit($item->deskripsi, 40) ?: '-' }}</span>
-                        </td>
-                        <td>
-                           @if($item->status == 1)
-                                <span class="badge bg-success">AKTIF</span>
-                            @else
-                                <span class="badge bg-danger">TIDAK AKTIF</span>
-                            @endif
                         </td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center">

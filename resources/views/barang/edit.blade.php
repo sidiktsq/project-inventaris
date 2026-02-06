@@ -68,7 +68,7 @@
                                     <option value="">Pilih Kategori...</option>
                                     @foreach($kategoris ?? [] as $k)
                                         <option value="{{ $k->id }}" {{ old('kategori_id', $barang->kategori_id) == $k->id ? 'selected' : '' }}>
-                                            {{ $k->nama_kategori }}
+                                            {{ $k->nama }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -80,7 +80,7 @@
                                     <option value="">Pilih Lokasi...</option>
                                     @foreach($lokasis ?? [] as $l)
                                         <option value="{{ $l->id }}" {{ old('lokasi_id', $barang->lokasi_id) == $l->id ? 'selected' : '' }}>
-                                            {{ $l->nama_lokasi }}
+                                            {{ $l->nama }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -134,7 +134,9 @@
                             <label class="form-label fw-semibold d-block">Foto Barang</label>
                             <div class="d-flex align-items-start align-items-sm-center gap-4">
                                 <img src="{{ $barang->foto ? asset('storage/' . $barang->foto) : asset('assets/img/elements/1.jpg') }}" 
-                                    alt="user-avatar" class="d-block rounded border shadow-sm" height="120" width="120" id="uploadedAvatar" style="object-fit: cover">
+                                    alt="foto-barang" class="d-block rounded border shadow-sm" height="120" width="120" id="uploadedAvatar" 
+                                    style="object-fit: cover"
+                                    onerror="this.onerror=null;this.src='{{ asset('assets/img/elements/1.jpg') }}';">
                                 <div class="button-wrapper">
                                     <label for="upload" class="btn btn-primary me-2 mb-2" tabindex="0">
                                         <span class="d-none d-sm-block">Unggah Foto Baru</span>

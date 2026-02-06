@@ -76,16 +76,30 @@ class BarangController extends Controller
         $barang = Barang::findOrFail($id);
         
         $request->validate([
-            'nama_barang' => 'required',
-            'kode_barang' => 'required|unique:barang,kode_barang,'.$id,
-            'kategori_id' => 'required',
-            'lokasi_id'   => 'required',
-        ]);
+        'nama_barang' => 'required',
+        'kode_barang' => 'required|unique:barang,kode_barang,'.$id,
+        'kategori_id' => 'required',
+        'lokasi_id'   => 'required',
+        'foto'        => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
 
-        $barang->update($request->all());
+    $data = $request->except(['foto']);
 
-        return redirect()->route('barang.index')->with('success', 'Data barang berhasil diperbarui');
+    if ($request->hasFile('foto')) {
+        // Hapus foto lama jika ada
+        if ($barang->foto && \Illuminate\Support\Facades\Storage::exists('public/' . $barang->foto)) {
+            \Illuminate\Support\Facades\Storage::delete('public/' . $barang->foto);
+        }
+
+        // Simpan foto baru
+        $path = $request->file('foto')->store('barang', 'public');
+        $data['foto'] = $path;
     }
+
+    $barang->update($data);
+
+    return redirect()->route('barang.index')->with('success', 'Data barang berhasil diperbarui');
+}    
 
     public function show($id)
     {

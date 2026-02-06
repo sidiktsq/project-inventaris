@@ -19,6 +19,11 @@ class Peminjaman extends Model
         'user_id',
     ];
 
+    protected $casts = [
+        'tanggal_pinjam' => 'date',
+        'tanggal_kembali' => 'date',
+    ];
+
     /**
      * Relasi ke DetailPeminjaman
      */
