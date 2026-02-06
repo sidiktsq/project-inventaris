@@ -11,7 +11,21 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('dashboard.index');
+        $totalBarang = \App\Models\Barang::count();
+        $peminjamanAktif = \App\Models\Peminjaman::where('status', 'dipinjam')->count();
+        $totalKategori = \App\Models\Kategori::count();
+        $totalLokasi = \App\Models\Lokasi::count();
+        $peminjamanTerbaru = \App\Models\Peminjaman::latest()->take(5)->get();
+        $barangStokRendah = \App\Models\Barang::where('jumlah', '<', 5)->count();
+
+        return view('dashboard.index', compact(
+            'totalBarang',
+            'peminjamanAktif',
+            'totalKategori',
+            'totalLokasi',
+            'peminjamanTerbaru',
+            'barangStokRendah'
+        ));
     }
 
     /**

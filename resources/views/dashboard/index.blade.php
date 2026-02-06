@@ -1,208 +1,187 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<style>
-    /* Custom CSS untuk tampilan lebih Elegan */
-    .content-wrapper { background-color: #f5f6fb; }
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<div class="container-xxl flex-grow-1 container-p-y" style="font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fbfbfd;">
     
-    /* Efek Floating Card */
-    .card {
-        border: none !important;
-        border-radius: 16px !important;
-        box-shadow: 0 4px 20px 0 rgba(0,0,0,0.05) !important;
-        transition: all 0.3s ease;
-    }
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px 0 rgba(0,0,0,0.1) !important;
-    }
-
-    /* Gradient Welcome Card */
-    .bg-welcome {
-        background: linear-gradient(135deg, #696cff 0%, #a3a5ff 100%) !important;
-        color: #fff !important;
-    }
-
-    /* Tipografi & Badge */
-    .card-title { color: #32475c; font-weight: 700; }
-    .text-primary-white { color: #fff !important; font-weight: 600; }
-    .badge-soft-success { background: #e8fadf; color: #71dd37; border-radius: 8px; padding: 5px 10px; }
-    
-    /* Icon Styling */
-    .avatar-initial {
-        border-radius: 12px !important;
-        padding: 8px;
-    }
-
-    /* Progress bar custom */
-    .user-progress h6 { font-size: 0.95rem; font-weight: 700; }
-</style>
-
-<div class="container-xxl flex-grow-1 container-p-y">
-    <div class="row">
-        <div class="col-lg-8 mb-4">
-            <div class="card bg-welcome border-0">
-                <div class="d-flex align-items-end row">
-                    <div class="col-sm-7">
-                        <div class="card-body">
-                            <h4 class="card-title text-primary-white mb-3">Selamat Datang Kembali, Admin! ✨</h4>
-                            <p class="mb-4" style="opacity: 0.9;">
-                                Penjualan Anda meningkat <span class="fw-bold text-white">72%</span> hari ini. Periksa statistik terbaru untuk melihat performa terbaik toko Anda.
-                            </p>
-                            <a href="javascript:;" class="btn btn-sm btn-white bg-white text-primary fw-bold shadow-sm">Lihat Laporan Lengkap</a>
-                        </div>
-                    </div>
-                    <div class="col-sm-5 text-center text-sm-left">
-                        <div class="card-body pb-0 px-0 px-md-4">
-                            <img src="../assets/img/illustrations/man-with-laptop-light.png" height="150" alt="Dashboard Illustration" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="d-md-flex align-items-center justify-content-between mb-5">
+        <div>
+            <h2 class="fw-extra-bold mb-1" style="letter-spacing: -1px; color: #1a1c1e;">Overview</h2>
+            <p class="text-muted mb-0">Selamat datang kembali, <span class="fw-bold text-primary">{{ Auth::user()->name }}</span>.</p>
         </div>
-
-        <div class="col-lg-4 col-md-4">
-            <div class="row">
-                <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div class="avatar bg-label-success rounded">
-                                    <i class="bx bx-chart fs-3"></i>
-                                </div>
-                                <div class="dropdown">
-                                    <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                        <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="fw-semibold d-block mb-1 text-muted">Profit</span>
-                            <h3 class="card-title mb-2">RP.95,500</h3>
-                            <small class="text-success fw-bold"><i class="bx bx-up-arrow-alt"></i> +72.80%</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-12 col-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div class="avatar bg-label-info rounded">
-                                    <i class="bx bx-wallet fs-3"></i>
-                                </div>
-                                <div class="dropdown">
-                                    <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
-                                        <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <span class="fw-semibold d-block mb-1 text-muted">Sales</span>
-                            <h3 class="card-title mb-2">Rp.60,679</h3>
-                            <small class="text-success fw-bold"><i class="bx bx-up-arrow-alt"></i> +28.42%</small>
-                        </div>
-                    </div>
+        <div class="mt-3 mt-md-0">
+            <div class="d-flex align-items-center bg-white shadow-sm p-2 px-3" style="border-radius: 12px; border: 1px solid #f0f0f0;">
+                <i class='bx bx-calendar-event fs-4 text-primary me-2'></i>
+                <div class="text-end">
+                    <div class="fw-bold small" style="color: #444;">{{ now()->format('d M Y') }}</div>
+                    <div style="font-size: 11px;" class="text-muted text-uppercase fw-bold">{{ now()->format('H:i') }} WIB</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12 col-lg-8 mb-4">
-            <div class="card">
-                <div class="row row-bordered g-0">
-                    <div class="col-md-8">
-                        <h5 class="card-header m-0 me-2 pb-3 fw-bold">Statistik Pendapatan</h5>
-                        <div id="totalRevenueChart" class="px-2" style="min-height: 315px;"></div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card-body text-center">
-                            <div class="dropdown mb-4">
-                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">Tahun 2026</button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">2025</a>
-                                    <a class="dropdown-item" href="#">2024</a>
-                                </div>
-                            </div>
-                            <div id="growthChart"></div>
-                            <div class="text-center fw-bold pt-3 mb-4">62% Pertumbuhan Perusahaan</div>
-                            
-                            <div class="d-grid gap-3">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <div class="badge bg-label-primary p-2 me-2"><i class="bx bx-dollar"></i></div>
-                                    <div class="text-start">
-                                        <small class="text-muted d-block">2026</small>
-                                        <h6 class="mb-0">Rp.32.500</h6>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <div class="badge bg-label-info p-2 me-2"><i class="bx bx-wallet"></i></div>
-                                    <div class="text-start">
-                                        <small class="text-muted d-block">2025</small>
-                                        <h6 class="mb-0">Rp.41.200</h6>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="row mb-5">
+        @php
+            $cards = [
+                ['label' => 'Total Assets', 'val' => $totalBarang, 'icon' => 'bx-cube-alt', 'color' => '#6366f1'],
+                ['label' => 'Active Loans', 'val' => $peminjamanAktif, 'icon' => 'bx-reset', 'color' => '#f59e0b'],
+                ['label' => 'Categories', 'val' => $totalKategori, 'icon' => 'bx-grid-alt', 'color' => '#10b981'],
+                ['label' => 'Locations', 'val' => $totalLokasi, 'icon' => 'bx-map-alt', 'color' => '#3b82f6'],
+            ];
+        @endphp
+        @foreach($cards as $c)
+        <div class="col-xl-3 col-sm-6 mb-4">
+            <div class="card border-0 shadow-soft h-100" style="border-radius: 24px; transition: transform 0.3s ease;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div class="avatar-box" style="background: {{ $c['color'] }}15; color: {{ $c['color'] }};">
+                            <i class='bx {{ $c['icon'] }} fs-3'></i>
                         </div>
+                    </div>
+                    <div class="mt-3">
+                        <h3 class="fw-extra-bold mb-0" style="color: #1a1c1e;">{{ $c['val'] }}</h3>
+                        <span class="text-muted small fw-medium uppercase-tracking">{{ $c['label'] }}</span>
                     </div>
                 </div>
             </div>
         </div>
+        @endforeach
+    </div>
 
-        <div class="col-12 col-md-8 col-lg-4 mb-4">
-            <div class="card h-100">
-                <div class="card-header d-flex align-items-center justify-content-between pb-3">
-                    <h5 class="card-title m-0">Transaksi Terakhir</h5>
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-soft h-100" style="border-radius: 28px;">
+                <div class="card-header bg-transparent border-0 p-4 d-flex align-items-center justify-content-between">
+                    <h5 class="fw-bold mb-0" style="color: #1a1c1e;">Peminjaman Terbaru</h5>
                     <div class="dropdown">
-                        <button class="btn p-0" type="button" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded text-muted"></i></button>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="#">Lihat Semua</a>
-                        </div>
+                        <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                            <i class='bx bx-dots-horizontal-rounded fs-4'></i>
+                        </button>
                     </div>
                 </div>
-                <div class="card-body">
-                    <ul class="p-0 m-0">
-                        <li class="d-flex mb-4 pb-1">
-                            <div class="avatar flex-shrink-0 me-3">
-                                <span class="avatar-initial rounded bg-label-primary"><i class="bx bxl-paypal"></i></span>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                <div class="me-2">
-                                    <h6 class="mb-0">Paypal</h6>
-                                    <small class="text-muted d-block">Pembayaran Masuk</small>
-                                </div>
-                                <div class="user-progress text-success fw-bold">+Rp.82.000</div>
-                            </div>
-                        </li>
-                        <li class="d-flex mb-4 pb-1">
-                            <div class="avatar flex-shrink-0 me-3">
-                                <span class="avatar-initial rounded bg-label-info"><i class="bx bx-wallet"></i></span>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                <div class="me-2">
-                                    <h6 class="mb-0">Starbucks</h6>
-                                    <small class="text-muted d-block">Hiburan & Makanan</small>
-                                </div>
-                                <div class="user-progress text-danger fw-bold">-Rp.4.500</div>
-                            </div>
-                        </li>
-                        <li class="d-flex">
-                            <div class="avatar flex-shrink-0 me-3">
-                                <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-credit-card"></i></span>
-                            </div>
-                            <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                <div class="me-2">
-                                    <h6 class="mb-0">Mastercard</h6>
-                                    <small class="text-muted d-block">Belanja Bulanan</small>
-                                </div>
-                                <div class="user-progress text-danger fw-bold">-Rp.92.450</div>
-                            </div>
-                        </li>
-                    </ul>
-                    <button class="btn btn-outline-primary w-100 mt-4">Lihat Seluruh Aktivitas</button>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-faint">
+                                <tr>
+                                    <th class="ps-4 border-0 text-muted small fw-bold">PEMINJAM</th>
+                                    <th class="border-0 text-muted small fw-bold text-center">STATUS</th>
+                                    <th class="pe-4 border-0 text-muted small fw-bold text-end">WAKTU</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($peminjamanTerbaru as $p)
+                                <tr style="cursor: pointer;">
+                                    <td class="ps-4 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3 fw-bold text-primary bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; font-size: 12px;">
+                                                {{ substr($p->nama_peminjam, 0, 2) }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-dark mb-0" style="font-size: 0.9rem;">{{ $p->nama_peminjam }}</div>
+                                                <div class="text-muted small">{{ $p->kode_peminjaman }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        @if($p->status == 'dipinjam')
+                                            <span class="dot-status bg-warning"></span> <small class="fw-bold text-warning">Active</small>
+                                        @else
+                                            <span class="dot-status bg-success"></span> <small class="fw-bold text-success">Returned</small>
+                                        @endif
+                                    </td>
+                                    <td class="pe-4 text-end text-muted small fw-medium">
+                                        {{ \Carbon\Carbon::parse($p->tanggal_pinjam)->format('d M') }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 text-center py-4">
+                    <a href="{{ route('peminjaman.index') }}" class="fw-bold text-primary text-decoration-none small">Lihat Semua Aktivitas <i class='bx bx-right-arrow-alt align-middle'></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 bg-dark shadow-dark mb-4" style="border-radius: 28px;">
+                <div class="card-body p-4 text-white">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="p-2 bg-white bg-opacity-10 rounded-3 me-3">
+                            <i class='bx bx-shield-quarter fs-3 text-warning'></i>
+                        </div>
+                        <h6 class="text-white fw-bold mb-0">System Alert</h6>
+                    </div>
+                    <p class="text-white-50 small mb-4">Ada <span class="text-white fw-bold">{{ $barangStokRendah }} item</span> yang butuh perhatian karena stok kritis.</p>
+                    <a href="{{ route('barang.index') }}" class="btn btn-warning w-100 fw-bold py-2 shadow-sm" style="border-radius: 14px;">Review Stok</a>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-soft" style="border-radius: 28px;">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-4" style="color: #1a1c1e;">Aksi Cepat</h6>
+                    <a href="{{ route('barang.create') }}" class="d-flex align-items-center p-3 mb-3 bg-faint rounded-4 text-decoration-none action-link">
+                        <div class="icon-circle bg-primary text-white me-3"><i class='bx bx-plus'></i></div>
+                        <div>
+                            <div class="fw-bold text-dark small">Tambah Item</div>
+                            <div class="text-muted" style="font-size: 11px;">Registrasi aset baru</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('peminjaman.create') }}" class="d-flex align-items-center p-3 bg-faint rounded-4 text-decoration-none action-link">
+                        <div class="icon-circle bg-success text-white me-3"><i class='bx bx-transfer'></i></div>
+                        <div>
+                            <div class="fw-bold text-dark small">Peminjaman</div>
+                            <div class="text-muted" style="font-size: 11px;">Input transaksi keluar</div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    :root {
+        --primary-color: #6366f1;
+    }
+    .fw-extra-bold { font-weight: 800; }
+    .uppercase-tracking { text-transform: uppercase; letter-spacing: 1.5px; font-size: 10px; font-weight: 700; }
+    
+    .shadow-soft { box-shadow: 0 10px 30px rgba(0,0,0,0.02), 0 5px 10px rgba(0,0,0,0.01) !important; }
+    .shadow-dark { box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important; }
+    
+    .avatar-box {
+        width: 54px; height: 54px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 18px;
+    }
+
+    .bg-faint { background-color: #f8f9fc; }
+    
+    .dot-status {
+        display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px;
+    }
+
+    .icon-circle {
+        width: 40px; height: 40px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+    }
+
+    .action-link { transition: all 0.2s ease; border: 1px solid transparent; }
+    .action-link:hover { 
+        background-color: #fff !important; 
+        border-color: #eee;
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    /* Elegant Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 10px; }
+
+    .card:hover { transform: translateY(-5px); }
+</style>
 @endsection

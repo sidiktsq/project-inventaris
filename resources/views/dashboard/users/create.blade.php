@@ -1,156 +1,201 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-7">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <div>
-                    <h3 class="fw-bold text-dark mb-1">Tambah Pengguna</h3>
-                    <p class="text-muted small mb-0">Silakan lengkapi formulir di bawah untuk menambahkan anggota tim baru.</p>
-                </div>
-                <a href="{{ route('dashboard.users.index') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-                    <i class="fas fa-arrow-left me-1"></i> Kembali
-                </a>
-            </div>
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    }
 
-            <div class="card border-0 shadow-lg p-2" style="border-radius: 20px;">
-                <div class="card-body p-4">
+    .content-wrapper {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #f8fafc;
+    }
+
+    /* Header Styling */
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .btn-back {
+        background: white;
+        color: #64748b;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: 1px solid #e2e8f0;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-back:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+        transform: translateX(-5px);
+    }
+
+    /* Card Styling */
+    .custom-card {
+        background: white;
+        border-radius: 24px;
+        border: none;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+
+    .card-accent {
+        height: 6px;
+        background: var(--primary-gradient);
+    }
+
+    .card-body-content {
+        padding: 40px;
+    }
+
+    /* Form Elements */
+    .form-label {
+        font-weight: 700;
+        color: #334155;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 12px 16px;
+        border: 1.5px solid #e2e8f0;
+        background-color: #fcfdfe;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #6366f1;
+        background-color: white;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        outline: none;
+    }
+
+    /* Button Save */
+    .btn-save {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 28px;
+        font-weight: 700;
+        width: 100%;
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+        transition: all 0.3s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(99, 102, 241, 0.35);
+        opacity: 0.95;
+    }
+
+    /* Icon Decoration */
+    .input-icon {
+        color: #6366f1;
+        font-size: 1.1rem;
+    }
+</style>
+
+<div class="container-xxl flex-grow-1 container-p-y mt-3">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-800 text-dark mb-1">Tambah Pengguna Baru</h3>
+            <p class="text-muted mb-0 small">Daftarkan akun petugas atau admin baru ke dalam sistem.</p>
+        </div>
+        <a href="{{ route('dashboard.users.index') }}" class="btn-back">
+            <i class="bx bx-arrow-back"></i> Kembali
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="custom-card">
+                <div class="card-accent"></div>
+                <div class="card-body-content">
                     <form action="{{ route('dashboard.users.store') }}" method="POST">
                         @csrf
-                        
-                        <div class="row">
-                            <div class="col-12 mb-4">
-                                <label for="name" class="form-label fw-semibold small text-muted">NAMA LENGKAP</label>
-                                <div class="input-group input-group-merge">
-                                    <span class="input-group-text bg-light border-0"><i class="fas fa-user text-primary"></i></span>
-                                    <input type="text" class="form-control bg-light border-0 @error('name') is-invalid @enderror" 
-                                        id="name" name="name" value="{{ old('name') }}" placeholder="Masukkan nama lengkap" required>
-                                </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">
+                                    <i class="bx bx-user input-icon"></i> Nama Lengkap
+                                </label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                                    id="name" name="name" placeholder="Contoh: John Doe" 
+                                    value="{{ old('name') }}" required>
                                 @error('name')
-                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="col-12 mb-4">
-                                <label for="email" class="form-label fw-semibold small text-muted">ALAMAT EMAIL</label>
-                                <div class="input-group input-group-merge">
-                                    <span class="input-group-text bg-light border-0"><i class="fas fa-envelope text-primary"></i></span>
-                                    <input type="email" class="form-control bg-light border-0 @error('email') is-invalid @enderror" 
-                                        id="email" name="email" value="{{ old('email') }}" placeholder="contoh@domain.com" required>
-                                </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">
+                                    <i class="bx bx-envelope input-icon"></i> Alamat Email
+                                </label>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                    id="email" name="email" placeholder="john@example.com"
+                                    value="{{ old('email') }}" required>
                                 @error('email')
-                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="col-12 mb-4">
-                                <label for="role" class="form-label fw-semibold small text-muted">HAK AKSES / ROLE</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-0"><i class="fas fa-shield-alt text-primary"></i></span>
-                                    <select class="form-select bg-light border-0 @error('role') is-invalid @enderror" id="role" name="role" required>
-                                        <option value="" selected disabled>Pilih Role...</option>
-                                        <option value="admin">Administrator</option>
-                                        <option value="petugas">Petugas Lapangan</option>
-                                    </select>
-                                </div>
+                            <div class="col-md-6">
+                                <label for="role" class="form-label">
+                                    <i class="bx bx-shield-alt-2 input-icon"></i> Hak Akses (Role)
+                                </label>
+                                <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required>
+                                    <option value="" selected disabled>Pilih Role...</option>
+                                    <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Administrator</option>
+                                    <option value="petugas" {{ old('role') == 'petugas' ? 'selected' : '' }}>Petugas</option>
+                                </select>
                                 @error('role')
-                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="col-12 mb-4">
-                                <label for="password" class="form-label fw-semibold small text-muted">KATA SANDI</label>
-                                <div class="input-group input-group-merge">
-                                    <span class="input-group-text bg-light border-0"><i class="fas fa-lock text-primary"></i></span>
-                                    <input type="password" class="form-control bg-light border-0 @error('password') is-invalid @enderror" 
-                                        id="password" name="password" placeholder="Minimal 8 karakter" required>
-                                    <button class="btn btn-light border-0" type="button" id="togglePassword">
-                                        <i class="far fa-eye" id="eyeIcon"></i>
-                                    </button>
-                                </div>
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">
+                                    <i class="bx bx-lock-alt input-icon"></i> Kata Sandi
+                                </label>
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                    id="password" name="password" placeholder="Minimal 8 karakter" required>
                                 @error('password')
-                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                        </div>
 
-                        <div class="d-grid mt-3">
-                            <button type="submit" class="btn btn-primary btn-lg shadow rounded-pill fw-bold py-3 transition-all">
-                                <i class="fas fa-user-plus me-2"></i> Daftarkan User Baru
-                            </button>
+                            <div class="col-12 mt-5">
+                                <div class="p-3 rounded-3 mb-4" style="background-color: #f0f4ff; border-left: 4px solid #6366f1;">
+                                    <p class="small text-muted mb-0">
+                                        Pastikan data yang dimasukkan sudah benar. Password akan langsung dienkripsi oleh sistem demi keamanan pengguna.
+                                    </p>
+                                </div>
+                                <button type="submit" class="btn-save">
+                                    <i class="bx bx-plus-circle fs-5"></i> Simpan Data Pengguna
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
-            
-            <p class="text-center text-muted small mt-4">
-                &copy; {{ date('Y') }} Manajemen Dashboard • Keamanan data terjamin.
-            </p>
         </div>
     </div>
 </div>
 @endsection
-
-@push('styles')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-    body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; }
-    
-    .card { transition: transform 0.3s ease; }
-    
-    .form-control, .form-select, .input-group-text {
-        padding: 0.75rem 1.25rem;
-    }
-
-    .form-control:focus, .form-select:focus {
-        background-color: #ffffff !important;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-        border: 1px solid #0d6efd !important;
-    }
-
-    .input-group-text {
-        border-top-left-radius: 12px !important;
-        border-bottom-left-radius: 12px !important;
-    }
-    
-    .form-control {
-        border-top-right-radius: 12px !important;
-        border-bottom-right-radius: 12px !important;
-    }
-
-    .transition-all {
-        transition: all 0.3s ease;
-    }
-
-    .transition-all:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px rgba(13, 110, 253, 0.3) !important;
-    }
-    
-    /* Menghilangkan border default datatables/bootstrap pada input group */
-    .input-group-merge .form-control:focus + .input-group-text {
-        border: 1px solid #0d6efd;
-    }
-</style>
-@endpush
-
-@push('scripts')
-<script>
-    // Fitur Intip Password (Show/Hide)
-    document.getElementById('togglePassword').addEventListener('click', function() {
-        const passwordInput = document.getElementById('password');
-        const eyeIcon = document.getElementById('eyeIcon');
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            eyeIcon.classList.remove('fa-eye');
-            eyeIcon.classList.add('fa-eye-slash');
-        } else {
-            passwordInput.type = 'password';
-            eyeIcon.classList.remove('fa-eye-slash');
-            eyeIcon.classList.add('fa-eye');
-        }
-    });
-</script>
-@endpush
